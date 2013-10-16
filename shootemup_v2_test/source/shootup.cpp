@@ -1,16 +1,18 @@
-//Last Edit 10/15/2013
+//Last Edit 10/16/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
 
 // global vars
 unsigned int bgImage = -1;
+unsigned int bgFilterRed = -1;
+unsigned int bgFilterBlue = -1;
 unsigned int bgMenu = -1;
 unsigned int bgGameOver = -1;
 movableObject player1 = {687, 386, 0, 0, -1 , 100, 50};
-bullets playerBullet = {0, 790, 0, 4, -1 , 10, 10, false, true};
-bullets playerBullet2 = {0, 790, -4, 4, -1 , 10, 10, false, true};
-bullets playerBullet3 = {0, 790, -4, 4, -1 , 10, 10, false, true};
+bullets playerBullet = {0, 0, 0, 4, -1 , 10, 10, false, true};
+bullets playerBullet2 = {0, 0, -4, 4, -1 , 10, 10, false, true};
+bullets playerBullet3 = {0, 0, -4, 4, -1 , 10, 10, false, true};
 movableObject enemy = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy2 = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject playGame = {SCREEN_X / 2, SCREEN_Y / 2 + 50, 0, 0, -1 , 100, 30};
@@ -22,6 +24,7 @@ vector<bullets> bulletLoaded;
 //vector<bullets> bulletLoaded2;
 //vector<bullets> bulletLoaded3;
 int player1Score = 0;
+highScore h;
 
 // check collision of bullet and enemy
 bool checkCollision(movableObject& obj1, bullets& obj2) {
@@ -52,7 +55,7 @@ bool checkCollision(movableObject& obj1, movableObject& obj2) {
 	double radiusEnemy = 25;
 
 	double rB = obj2.position.x;
-	double radiusBullet = 50;
+	double radiusBullet = 25;
 
 	double distX = obj1.position.x - obj2.position.x;
 	double distY = obj1.position.y - obj2.position.y;
@@ -254,11 +257,18 @@ bool checkCollision(movableObject& obj1) {
 // initialize all the variables in the game
 void initGame() {
 	srand(time(0));
+	
+	h.read();
 
 	// Now load some sprites
-	bgImage = CreateSprite( "./images/bg.jpg", SCREEN_X, SCREEN_Y, true );
+	bgImage = CreateSprite( "./images/bg.png", SCREEN_X, SCREEN_Y, true );
 	MoveSprite(bgImage, SCREEN_X>>1, SCREEN_Y>>1);
-
+	bgFilterRed = CreateSprite( "./images/softred.png", SCREEN_X, SCREEN_Y, true );
+	MoveSprite(bgFilterRed, SCREEN_X>>1, SCREEN_Y>>1);
+	//MoveSprite(bgFilterRed, 0, 2340);
+	bgFilterBlue = CreateSprite( "./images/softblue.png", SCREEN_X, SCREEN_Y, true );
+	MoveSprite(bgFilterBlue, SCREEN_X>>1, SCREEN_Y>>1);
+	//MoveSprite(bgFilterBlue, 0, 1560);
 	player1.sprite = CreateSprite( "./images/player.png", PLAYER1_W, PLAYER1_H, true );
 	playerBullet.sprite = CreateSprite( "./images/bullet.png", 10, 10, true );
 	playerBullet2.sprite = CreateSprite( "./images/bullet.png", 10, 10, true );
@@ -315,11 +325,14 @@ void updateGame() {
 
 	spawnEnemy(enemy2);
 
-	if (checkCollision(enemy, player1) == true)
+	if (checkCollision(enemy, player1) == true) {
 		gameProcess = &gameOverState;
-
-	if (checkCollision(enemy2, player1) == true)
+		writeHS();
+	}
+	if (checkCollision(enemy2, player1) == true) {
 		gameProcess = &gameOverState;
+		writeHS();
+	}
 
 	char score[10];
 	itoa(scores,score,10);
@@ -350,6 +363,8 @@ void updateGame() {
 void drawGame() {
 
 	DrawSprite(bgImage);
+	DrawSprite(bgFilterRed);
+	DrawSprite(bgFilterBlue);
 	DrawSprite(playerBullet.sprite);
 	DrawSprite(playerBullet2.sprite);
 	DrawSprite(playerBullet3.sprite);
@@ -413,6 +428,7 @@ void updateGameOver()
 		gameProcess = &menuState;
 	//if (GetMouseButtonDown(MOUSE_BUTTON_1) == true && checkMouseClick(playGame) == true)
 		//gameProcess = &playState;
+
 }
 
 void drawGameOver()
@@ -435,4 +451,9 @@ void gameOverState()
 	resetEnemy(enemy);
 	resetEnemy(enemy2);
 	scores = 0;
+}
+
+void writeHS()
+{
+	h.write(scores);
 }

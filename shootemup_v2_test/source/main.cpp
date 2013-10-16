@@ -1,4 +1,4 @@
-//Last Edit 10/15/2013
+//Last Edit 10/16/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -10,7 +10,7 @@ void (*gameProcess)();
 int main( int arc, char* argv[] )
 {	
 	// First we need to create our Game Framework
-	Initialise(SCREEN_X, SCREEN_Y, false );
+	Initialise(SCREEN_X, SCREEN_Y, false,"Shoot em up" );
 	/*
 	initMenu();
 	menuProcess = &updateMenu;

@@ -1,4 +1,4 @@
-//Last Edit 10/15/2013
+//Last Edit 10/16/2013
 //Will Gilstrap
 /////////////////////
 #ifndef _GAMESTATES_H_
@@ -6,6 +6,7 @@
 
 #include "shootup.h"
 
+// functions for game states
 void initMenu();
 void updateMenu();
 void drawMenu();

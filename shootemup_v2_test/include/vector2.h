@@ -1,5 +1,5 @@
 //class vector 2d
-//Last Edit 10/15/2013
+//Last Edit 10/16/2013
 //Will Gilstrap
 /////////////////////
 #ifndef _VECTOR2_H_

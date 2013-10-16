@@ -15,6 +15,9 @@
     <None Include="resources\fonts\arial.fnt" />
     <None Include="resources\shaders\StaticFW_Pixel.glsl" />
     <None Include="resources\shaders\StaticFW_Vertex.glsl" />
+    <None Include="resources\images\bg.png" />
+    <None Include="resources\images\softblue.png" />
+    <None Include="resources\images\softred.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AIE.h">
@@ -35,6 +38,12 @@
     <ClInclude Include="include\gameStates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\highScores.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\moveFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\shootup.cpp">
@@ -43,7 +52,7 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\movableObject.cpp">
+    <ClCompile Include="source\highScores.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-//Last Edit 10/15/2013
+//Last Edit 10/16/2013
 //Will Gilstrap
 /////////////////////
 #pragma once
@@ -18,35 +18,12 @@
 #include "gameStates.h"
 #include "movableObject.h"
 #include "bullets.h"
+#include "highScores.h"
+#include "moveFilter.h"
 
 using namespace std;
 
 extern void (*gameProcess)();
-
-/*
-struct vector2{
-	float x;
-	float y;
-};
-
-struct movableObject{
-	vector2 position;
-	vector2 speed;
-	int sprite;
-	int width;
-	int height;
-};
-
-struct bullets{
-	vector2 position;
-	vector2 speed;
-	int sprite;
-	int width;
-	int height;
-	bool alive;
-	bool dead;
-};
-*/
 
 // Global consts
 const int SPEED = 10;
@@ -76,5 +53,6 @@ void destroyGame();
 void checkEnemyCollision();
 void updateGame();
 void drawGame();
+void writeHS();
 
 #endif
