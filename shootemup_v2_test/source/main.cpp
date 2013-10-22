@@ -1,4 +1,4 @@
-//Last Edit 10/16/2013
+//Last Edit 10/21/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -11,13 +11,7 @@ int main( int arc, char* argv[] )
 {	
 	// First we need to create our Game Framework
 	Initialise(SCREEN_X, SCREEN_Y, false,"Shoot em up" );
-	/*
-	initMenu();
-	menuProcess = &updateMenu;
-	do {
-		menuProcess();
-	} while (menuEnd == false);
-	*/
+
 	initGame();
 	initMenu();
 	initGameOver();
@@ -28,7 +22,7 @@ int main( int arc, char* argv[] )
 		if(frameCounter > 5000)
 			frameCounter = 0;
 		
-		gameProcess();
+		gameProcess();	// function pointer to run game
 		
 	} while ( FrameworkUpdate() == false );
 

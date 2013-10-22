@@ -1,4 +1,4 @@
-//Last Edit 10/16/2013
+//Last Edit 10/21/2013
 //Will Gilstrap
 /////////////////////
 #pragma once
@@ -35,8 +35,11 @@ const int PLAYER1_W = 100;
 const int PLAYER1_H = 50;
 
 // functions
+// collision
 bool checkCollision(movableObject& obj1, bullets& obj2);
 bool checkCollision(movableObject& obj1, movableObject& obj2);
+bool checkCollision(movableObject& obj1, enemybullets& obj2);
+// player movement/shoot
 void seekX(movableObject &player, movableObject& ball);
 void seekY(movableObject &player, movableObject& ball);
 void movePlayer(movableObject& obj);
@@ -45,9 +48,15 @@ void ifAlive(bullets& obj, bullets& obj2, bullets& obj3);
 int getPlayerLocationX();
 int getPlayerLocationY();
 void ifDead(bullets& obj, bullets& obj2, bullets& obj3);
+// enemy functions
 void spawnEnemy(movableObject& obj);
 void resetEnemy(movableObject& obj);
+void spawnEnemySide(movableObject& obj);
+void resetEnemySide(movableObject& obj);
+void enemyShoot(enemybullets& obj);
+void enemyShoot(int x, int y);
 bool checkCollision(movableObject& obj1);
+// game stuff
 void initGame();
 void destroyGame();
 void checkEnemyCollision();

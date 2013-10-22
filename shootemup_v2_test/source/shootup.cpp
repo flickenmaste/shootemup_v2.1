@@ -1,12 +1,10 @@
-//Last Edit 10/16/2013
+//Last Edit 10/21/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
 
 // global vars
 unsigned int bgImage = -1;
-unsigned int bgFilterRed = -1;
-unsigned int bgFilterBlue = -1;
 unsigned int bgMenu = -1;
 unsigned int bgGameOver = -1;
 movableObject player1 = {687, 386, 0, 0, -1 , 100, 50};
@@ -15,6 +13,8 @@ bullets playerBullet2 = {0, 0, -4, 4, -1 , 10, 10, false, true};
 bullets playerBullet3 = {0, 0, -4, 4, -1 , 10, 10, false, true};
 movableObject enemy = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy2 = {-500, 800, 0, 1, -1 , 50, 50};
+movableObject enemy3 = {0, 0, 0, 1, -1 , 50, 50};
+enemybullets enemyBullet = {600, -10, 0, 4, -1 , 10, 10, false, true};
 movableObject playGame = {SCREEN_X / 2, SCREEN_Y / 2 + 50, 0, 0, -1 , 100, 30};
 movableObject exitMenu = {SCREEN_X / 2, SCREEN_Y / 2 + 100, 0, 0, -1 , 100, 30};
 bool g_gameOver = false;
@@ -23,6 +23,7 @@ unsigned int scores = 0;
 vector<bullets> bulletLoaded;
 //vector<bullets> bulletLoaded2;
 //vector<bullets> bulletLoaded3;
+enemybullets enemyHell[10];
 int player1Score = 0;
 highScore h;
 
@@ -56,6 +57,27 @@ bool checkCollision(movableObject& obj1, movableObject& obj2) {
 
 	double rB = obj2.position.x;
 	double radiusBullet = 25;
+
+	double distX = obj1.position.x - obj2.position.x;
+	double distY = obj1.position.y - obj2.position.y;
+
+	double dist = sqrt((distX * distX) + (distY * distY));
+	double radii = (radiusEnemy + radiusBullet) * (radiusEnemy + radiusBullet);
+
+	if (dist < radiusEnemy + radiusBullet)
+		return true;
+	else
+		return false;
+}
+
+bool checkCollision(movableObject& obj1, enemybullets& obj2) {
+	int x; int y;
+	GetMouseLocation(x,y);
+	double rE = obj1.position.x;
+	double radiusEnemy = 5;
+
+	double rB = obj2.position.x;
+	double radiusBullet = 5;
 
 	double distX = obj1.position.x - obj2.position.x;
 	double distY = obj1.position.y - obj2.position.y;
@@ -241,6 +263,87 @@ void resetEnemy(movableObject& obj)
 	obj.position.y = 0;
 }
 
+void spawnEnemySide(movableObject& obj)	// function to spawn a basic enemy
+{
+	int spawn = rand() % SCREEN_X;
+	
+
+	int spawnSide = 0;
+
+
+	if (obj.position.x >= 640)
+	{
+		obj.position.x -= 1;
+		obj.position.y += obj.speed.y;
+	}
+	
+	if (obj.position.x <= 640)
+	{
+		obj.position.x += 1;
+		obj.position.y += obj.speed.y;
+	}
+
+	if (obj.position.y > SCREEN_Y / 2)
+		obj.position.y += obj.speed.y;
+
+	if (obj.position.y > SCREEN_Y)
+		resetEnemySide(enemy3);
+
+}
+
+void resetEnemySide(movableObject& obj)
+{
+	int spawn = rand() % SCREEN_X;
+
+	obj.position.x = spawn;
+	obj.position.y = 0;
+}
+
+void enemyShoot(enemybullets& obj, int x, int y)
+{
+	
+	float speed = 2;
+
+	if (obj.position.y <= 0)
+	{
+		obj.position.x = enemy.position.x;
+		obj.position.y = enemy.position.y;
+	}
+
+	if (obj.position.y >= 780)
+	{
+		obj.position.x = enemy.position.x;
+		obj.position.y = enemy.position.y;
+	}
+	
+	
+	obj.position.y += speed;
+}
+
+void enemyShoot(int x, int y)
+{
+	float speed = 2;
+	float sideShot = -5;
+	for (int i = 0; i < 10; i++)
+	{
+	if (enemyHell[i].position.y <= 0)
+	{
+		enemyHell[i].position.x = enemy3.position.x;
+		enemyHell[i].position.y = enemy3.position.y;
+	}
+
+	if (enemyHell[i].position.y >= 780)
+	{
+		enemyHell[i].position.x = enemy3.position.x;
+		enemyHell[i].position.y = enemy3.position.y;
+	}
+	
+	enemyHell[i].position.x += sideShot;
+	enemyHell[i].position.y += speed;
+	sideShot++;
+	}
+}
+
 // check if one object has collided with another object
 // returns true if the two objects have collided
 bool checkCollision(movableObject& obj1) {	
@@ -263,18 +366,25 @@ void initGame() {
 	// Now load some sprites
 	bgImage = CreateSprite( "./images/bg.png", SCREEN_X, SCREEN_Y, true );
 	MoveSprite(bgImage, SCREEN_X>>1, SCREEN_Y>>1);
-	bgFilterRed = CreateSprite( "./images/softred.png", SCREEN_X, SCREEN_Y, true );
-	MoveSprite(bgFilterRed, SCREEN_X>>1, SCREEN_Y>>1);
-	//MoveSprite(bgFilterRed, 0, 2340);
-	bgFilterBlue = CreateSprite( "./images/softblue.png", SCREEN_X, SCREEN_Y, true );
-	MoveSprite(bgFilterBlue, SCREEN_X>>1, SCREEN_Y>>1);
-	//MoveSprite(bgFilterBlue, 0, 1560);
 	player1.sprite = CreateSprite( "./images/player.png", PLAYER1_W, PLAYER1_H, true );
 	playerBullet.sprite = CreateSprite( "./images/bullet.png", 10, 10, true );
 	playerBullet2.sprite = CreateSprite( "./images/bullet.png", 10, 10, true );
 	playerBullet3.sprite = CreateSprite( "./images/bullet.png", 10, 10, true );
 	enemy.sprite = CreateSprite( "./images/enemy.png", 50, 50, true );
 	enemy2.sprite = CreateSprite( "./images/enemy.png", 50, 50, true );
+	enemy3.sprite = CreateSprite( "./images/enemy.png", 50, 50, true );
+	enemyBullet.sprite = CreateSprite( "./images/enemybullet.png", 10, 10, true );
+
+	for (int i = 0; i < 10; i++)
+	{
+		enemyHell[i].sprite = CreateSprite( "./images/enemybullet.png", 10, 10, true );
+		enemyHell[i].position.x = 600;
+		enemyHell[i].position.y = -10;
+		enemyHell[i].speed.x = 0;
+		enemyHell[i].speed.y = 4;
+		enemyHell[i].width = 10;
+		enemyHell[i].height = 10;
+	}
 	
 }
 
@@ -287,6 +397,12 @@ void destroyGame() {
 	DestroySprite(playerBullet3.sprite);
 	DestroySprite(enemy.sprite);
 	DestroySprite(enemy2.sprite);
+	DestroySprite(enemy3.sprite);
+	DestroySprite(enemyBullet.sprite);
+	for (int i = 0; i < 10; i++)
+	{
+		DestroySprite(enemyHell[i].sprite);
+	}
 }
 
 void checkEnemyCollision()
@@ -305,6 +421,12 @@ void checkEnemyCollision()
 		scores++;
 		resetEnemy(enemy2);
 	}
+
+	if (checkCollision(enemy3, playerBullet) == true || checkCollision(enemy3, playerBullet2) == true || checkCollision(enemy3, playerBullet3) == true)
+	{
+		scores++;
+		resetEnemy(enemy3);
+	}
 }
 
 // update the game logic here
@@ -314,6 +436,8 @@ void updateGame() {
 	movePlayer(player1);
 	playerShoot(playerBullet, playerBullet2, playerBullet3);
 	spawnEnemy(enemy);
+	enemyShoot(enemyBullet, getPlayerLocationX(), getPlayerLocationY());
+	enemyShoot(getPlayerLocationX(), getPlayerLocationY());
 	if (playerBullet.alive == true && playerBullet2.alive == true && playerBullet3.alive == true)
 		ifAlive(playerBullet, playerBullet2, playerBullet3);
 
@@ -324,6 +448,7 @@ void updateGame() {
 	checkEnemyCollision();
 
 	spawnEnemy(enemy2);
+	spawnEnemySide(enemy3);
 
 	if (checkCollision(enemy, player1) == true) {
 		gameProcess = &gameOverState;
@@ -332,6 +457,23 @@ void updateGame() {
 	if (checkCollision(enemy2, player1) == true) {
 		gameProcess = &gameOverState;
 		writeHS();
+	}
+
+	if (checkCollision(enemy3, player1) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
+
+	if (checkCollision(player1,enemyBullet) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
+	for (int i = 0; i < 10; i++)
+	{
+	if (checkCollision(player1,enemyHell[i]) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
 	}
 
 	char score[10];
@@ -352,6 +494,12 @@ void updateGame() {
 	RotateSprite(enemy.sprite, 0);
 	MoveSprite(enemy.sprite, enemy.position.x, enemy.position.y);
 	MoveSprite(enemy2.sprite, enemy2.position.x, enemy2.position.y);
+	MoveSprite(enemy3.sprite, enemy3.position.x, enemy3.position.y);
+	MoveSprite(enemyBullet.sprite, enemyBullet.position.x, enemyBullet.position.y);
+	for (int i = 0; i < 10; i++)
+	{
+	MoveSprite(enemyHell[i].sprite, enemyHell[i].position.x, enemyHell[i].position.y);
+	}
 
 	if (IsKeyDown(KEY_SPECIAL+38) == true)
 		gameProcess = &menuState;
@@ -363,16 +511,20 @@ void updateGame() {
 void drawGame() {
 
 	DrawSprite(bgImage);
-	DrawSprite(bgFilterRed);
-	DrawSprite(bgFilterBlue);
 	DrawSprite(playerBullet.sprite);
 	DrawSprite(playerBullet2.sprite);
 	DrawSprite(playerBullet3.sprite);
 	DrawSprite(player1.sprite);
 	DrawSprite(enemy.sprite);
 	DrawSprite(enemy2.sprite);
+	DrawSprite(enemy3.sprite);
+	DrawSprite(enemyBullet.sprite);
+	for (int i = 0; i < 10; i++)
+	{
+		DrawSprite(enemyHell[i].sprite);
+	}
 }
-
+// Menu fuctions
 void initMenu()
 {
 	bgMenu = CreateSprite( "./images/menu3.jpg", SCREEN_X, SCREEN_Y, true );
@@ -408,14 +560,14 @@ void menuState()
 	updateMenu();
 	drawMenu();
 }
-
+// Play state function
 void playState()
 {
 	ClearScreen();
 	updateGame();
 	drawGame();
 }
-
+// Game Over functions
 void initGameOver()
 {
 	bgGameOver = CreateSprite( "./images/gameover.jpg", SCREEN_X, SCREEN_Y, true );
@@ -450,9 +602,22 @@ void gameOverState()
 	drawGameOver();
 	resetEnemy(enemy);
 	resetEnemy(enemy2);
+	resetEnemySide(enemy3);
+	enemyBullet.position.y = -10;
+	playerBullet.position.x = 0;
+	playerBullet.position.y = 0;
+	playerBullet2.position.x = 0;
+	playerBullet2.position.y = 0;
+	playerBullet3.position.x = 0;
+	playerBullet3.position.y = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		enemyHell[i].position.x = 0;
+		enemyHell[i].position.y = 0;
+	}
 	scores = 0;
 }
-
+// Write high scores
 void writeHS()
 {
 	h.write(scores);

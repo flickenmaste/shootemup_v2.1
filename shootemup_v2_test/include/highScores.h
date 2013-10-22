@@ -7,7 +7,7 @@
 #include <string>
 #include "shootup.h"
 
-static class highScore
+class highScore
 {
 public:
 	std::string line;
