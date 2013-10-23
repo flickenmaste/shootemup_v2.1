@@ -1,4 +1,4 @@
-//Last Edit 10/21/2013
+//Last Edit 10/22/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -8,12 +8,13 @@ unsigned int bgImage = -1;
 unsigned int bgMenu = -1;
 unsigned int bgGameOver = -1;
 movableObject player1 = {687, 386, 0, 0, -1 , 100, 50};
-bullets playerBullet = {0, 0, 0, 4, -1 , 10, 10, false, true};
-bullets playerBullet2 = {0, 0, -4, 4, -1 , 10, 10, false, true};
-bullets playerBullet3 = {0, 0, -4, 4, -1 , 10, 10, false, true};
+bullets playerBullet = {-100, 0, 0, 4, -1 , 10, 10, false, true};
+bullets playerBullet2 = {-100, 0, -4, 4, -1 , 10, 10, false, true};
+bullets playerBullet3 = {-100, 0, -4, 4, -1 , 10, 10, false, true};
 movableObject enemy = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy2 = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy3 = {0, 0, 0, 1, -1 , 50, 50};
+movableObject boss = {SCREEN_X / 2, SCREEN_Y / 6, 0, 1, -1 , 100, 100};
 enemybullets enemyBullet = {600, -10, 0, 4, -1 , 10, 10, false, true};
 movableObject playGame = {SCREEN_X / 2, SCREEN_Y / 2 + 50, 0, 0, -1 , 100, 30};
 movableObject exitMenu = {SCREEN_X / 2, SCREEN_Y / 2 + 100, 0, 0, -1 , 100, 30};
@@ -24,8 +25,10 @@ vector<bullets> bulletLoaded;
 //vector<bullets> bulletLoaded2;
 //vector<bullets> bulletLoaded3;
 enemybullets enemyHell[10];
+enemybullets bossShot[10];
 int player1Score = 0;
 highScore h;
+unsigned int checkKilled = 0;
 
 // check collision of bullet and enemy
 bool checkCollision(movableObject& obj1, bullets& obj2) {
@@ -344,6 +347,52 @@ void enemyShoot(int x, int y)
 	}
 }
 
+void bossShoot(int x, int y)
+{
+	static float angle = 0.0;
+	float pi = 3.14;
+	angle += 0.01;
+	float inc = 0.0;
+	float circle = 10;
+	for(int i = 0; i<10; i++)			
+	{
+		bossShot[i].position.x = (boss.position.x) + cosf( angle+inc ) * circle;
+		bossShot[i].position.y = (boss.position.y) + sinf( angle+inc ) * circle;
+		MoveSprite(bossShot[i].sprite, bossShot[i].position.x, bossShot[i].position.y);			
+		inc += 2*pi / 30;
+		circle += 60;
+	}
+	/*
+	static float angle = 0.0;
+	float pi = 3.14;
+	angle += 0.01;
+	float inc = 0.0;
+	float speed = 2;
+	float sideShot = -5;
+	//float sideShot = (boss.position.x) + cosf( angle+inc ) * 300;
+
+	for (int i = 0; i < 10; i++)
+	{
+	if (bossShot[i].position.y <= 0)
+	{
+		bossShot[i].position.x = boss.position.x;
+		bossShot[i].position.y = boss.position.y;
+	}
+
+	if (bossShot[i].position.y >= 780)
+	{
+		bossShot[i].position.x = boss.position.x;
+		bossShot[i].position.y = boss.position.y;
+	}
+	
+	bossShot[i].position.x += sideShot;
+	bossShot[i].position.y += speed;
+	inc += 2*(3.14) / 30;
+	sideShot++;
+}
+*/
+}
+
 // check if one object has collided with another object
 // returns true if the two objects have collided
 bool checkCollision(movableObject& obj1) {	
@@ -413,18 +462,21 @@ void checkEnemyCollision()
 	if (checkCollision(enemy, playerBullet) == true || checkCollision(enemy, playerBullet2) == true || checkCollision(enemy, playerBullet3) == true)
 	{
 		scores++;
+		checkKilled++;
 		resetEnemy(enemy);
 	}
 
 	if (checkCollision(enemy2, playerBullet) == true || checkCollision(enemy2, playerBullet2) == true || checkCollision(enemy2, playerBullet3) == true)
 	{
 		scores++;
+		checkKilled++;
 		resetEnemy(enemy2);
 	}
 
 	if (checkCollision(enemy3, playerBullet) == true || checkCollision(enemy3, playerBullet2) == true || checkCollision(enemy3, playerBullet3) == true)
 	{
 		scores++;
+		checkKilled++;
 		resetEnemy(enemy3);
 	}
 }
@@ -475,6 +527,9 @@ void updateGame() {
 		writeHS();
 	}
 	}
+
+	if (checkKilled >= 2)
+		gameProcess = &bossState;
 
 	char score[10];
 	itoa(scores,score,10);
@@ -567,6 +622,84 @@ void playState()
 	updateGame();
 	drawGame();
 }
+
+// Boss state
+void initBoss()
+{
+	boss.sprite = CreateSprite( "./images/enemy.png", 100, 100, true );
+		for (int i = 0; i < 10; i++)
+	{
+		bossShot[i].sprite = CreateSprite( "./images/enemybullet.png", 10, 10, true );
+		bossShot[i].position.x = 600;
+		bossShot[i].position.y = -10;
+		bossShot[i].speed.x = 0;
+		bossShot[i].speed.y = 4;
+		bossShot[i].width = 10;
+		bossShot[i].height = 10;
+	}
+}
+
+void updateBoss()
+{
+	movePlayer(player1);
+	playerShoot(playerBullet, playerBullet2, playerBullet3);
+	bossShoot(getPlayerLocationX(), getPlayerLocationY());
+	if (playerBullet.alive == true && playerBullet2.alive == true && playerBullet3.alive == true)
+		ifAlive(playerBullet, playerBullet2, playerBullet3);
+
+
+	if (playerBullet.dead == true && playerBullet2.dead == true && playerBullet3.dead == true)
+		ifDead(playerBullet, playerBullet2, playerBullet3);
+	MoveSprite(boss.sprite, boss.position.x, boss.position.y);
+	for (int i = 0; i < 10; i++)
+	{
+		MoveSprite(bossShot[i].sprite, bossShot[i].position.x, bossShot[i].position.y);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+	if (checkCollision(player1,bossShot[i]) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
+	}
+
+	RotateSprite(player1.sprite, 0);
+	MoveSprite(player1.sprite, player1.position.x, player1.position.y);
+	
+	RotateSprite(playerBullet.sprite, 0);
+	MoveSprite(playerBullet.sprite, playerBullet.position.x, playerBullet.position.y);
+	RotateSprite(playerBullet2.sprite, 0);
+	MoveSprite(playerBullet2.sprite, playerBullet2.position.x, playerBullet2.position.y);
+	RotateSprite(playerBullet3.sprite, 0);
+	MoveSprite(playerBullet3.sprite, playerBullet3.position.x, playerBullet3.position.y);
+}
+
+void drawBoss()
+{
+	DrawSprite(player1.sprite);
+	DrawSprite(playerBullet.sprite);
+	DrawSprite(playerBullet2.sprite);
+	DrawSprite(playerBullet3.sprite);
+	DrawSprite(boss.sprite);
+	for (int i = 0; i < 10; i++)
+	{
+		DrawSprite(bossShot[i].sprite);
+	}
+}
+
+void destroyBoss()
+{
+	DestroySprite(boss.sprite);
+}
+
+void bossState()
+{
+	ClearScreen();
+	updateBoss();
+	drawBoss();
+}
+
 // Game Over functions
 void initGameOver()
 {
@@ -616,6 +749,7 @@ void gameOverState()
 		enemyHell[i].position.y = 0;
 	}
 	scores = 0;
+	checkKilled = 0;
 }
 // Write high scores
 void writeHS()

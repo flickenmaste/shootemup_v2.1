@@ -1,6 +1,7 @@
 //Last Edit 10/21/2013
 //Will Gilstrap
 /////////////////////
+//#define WIN32_LEAN_AND_MEAN
 #include "shootup.h"
 
 int frameCounter = 0;
@@ -14,6 +15,7 @@ int main( int arc, char* argv[] )
 
 	initGame();
 	initMenu();
+	initBoss();
 	initGameOver();
 	gameProcess = &menuState;	
 	do {

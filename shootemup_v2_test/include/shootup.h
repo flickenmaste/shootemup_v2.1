@@ -1,4 +1,4 @@
-//Last Edit 10/21/2013
+//Last Edit 10/22/2013
 //Will Gilstrap
 /////////////////////
 #pragma once
@@ -55,6 +55,7 @@ void spawnEnemySide(movableObject& obj);
 void resetEnemySide(movableObject& obj);
 void enemyShoot(enemybullets& obj);
 void enemyShoot(int x, int y);
+void bossShoot(int x, int y);
 bool checkCollision(movableObject& obj1);
 // game stuff
 void initGame();

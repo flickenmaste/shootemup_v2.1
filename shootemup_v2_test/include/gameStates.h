@@ -1,4 +1,4 @@
-//Last Edit 10/21/2013
+//Last Edit 10/22/2013
 //Will Gilstrap
 /////////////////////
 #ifndef _GAMESTATES_H_
@@ -21,5 +21,11 @@ void updateGameOver();
 void drawGameOver();
 void destroyGameOver();
 void gameOverState();
+// Boss room
+void initBoss();
+void updateBoss();
+void drawBoss();
+void destroyBoss();
+void bossState();
 
 #endif
