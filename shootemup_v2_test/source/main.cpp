@@ -1,4 +1,4 @@
-//Last Edit 10/21/2013
+//Last Edit 10/23/2013
 //Will Gilstrap
 /////////////////////
 //#define WIN32_LEAN_AND_MEAN
@@ -27,8 +27,11 @@ int main( int arc, char* argv[] )
 		gameProcess();	// function pointer to run game
 		
 	} while ( FrameworkUpdate() == false );
-
+	// clean up memory
 	destroyGame();
+	destroyMenu();
+	destroyBoss();
+	destroyGameOver();
 	
 	Shutdown();
 

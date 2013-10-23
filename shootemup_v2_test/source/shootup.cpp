@@ -1,4 +1,4 @@
-//Last Edit 10/22/2013
+//Last Edit 10/23/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -15,6 +15,8 @@ movableObject enemy = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy2 = {-500, 800, 0, 1, -1 , 50, 50};
 movableObject enemy3 = {0, 0, 0, 1, -1 , 50, 50};
 movableObject boss = {SCREEN_X / 2, SCREEN_Y / 6, 0, 1, -1 , 100, 100};
+movableObject enemyB1 = {0, 0, 0, 1, -1 , 50, 50};
+movableObject enemyB2 = {0, 0, 0, 1, -1 , 50, 50};
 enemybullets enemyBullet = {600, -10, 0, 4, -1 , 10, 10, false, true};
 movableObject playGame = {SCREEN_X / 2, SCREEN_Y / 2 + 50, 0, 0, -1 , 100, 30};
 movableObject exitMenu = {SCREEN_X / 2, SCREEN_Y / 2 + 100, 0, 0, -1 , 100, 30};
@@ -26,16 +28,20 @@ vector<bullets> bulletLoaded;
 //vector<bullets> bulletLoaded3;
 enemybullets enemyHell[10];
 enemybullets bossShot[10];
+enemybullets bossShot2[10];
+enemybullets miniShot[2];
 int player1Score = 0;
 highScore h;
 unsigned int checkKilled = 0;
+float circle = 10;
+int bossHP = 1000;
 
 // check collision of bullet and enemy
 bool checkCollision(movableObject& obj1, bullets& obj2) {
 	int x; int y;
 	GetMouseLocation(x,y);
 	double rE = obj1.position.x;
-	double radiusEnemy = 25;
+	double radiusEnemy = obj1.width / 2;
 
 	double rB = obj2.position.x;
 	double radiusBullet = 5;
@@ -72,7 +78,7 @@ bool checkCollision(movableObject& obj1, movableObject& obj2) {
 	else
 		return false;
 }
-
+// check collision of player and enemy bullets
 bool checkCollision(movableObject& obj1, enemybullets& obj2) {
 	int x; int y;
 	GetMouseLocation(x,y);
@@ -353,44 +359,80 @@ void bossShoot(int x, int y)
 	float pi = 3.14;
 	angle += 0.01;
 	float inc = 0.0;
-	float circle = 10;
-	for(int i = 0; i<10; i++)			
+	//float circle = 10;
+	
+	
+	for(int i = 0; i<10; i++)
 	{
 		bossShot[i].position.x = (boss.position.x) + cosf( angle+inc ) * circle;
 		bossShot[i].position.y = (boss.position.y) + sinf( angle+inc ) * circle;
-		MoveSprite(bossShot[i].sprite, bossShot[i].position.x, bossShot[i].position.y);			
-		inc += 2*pi / 30;
-		circle += 60;
+		MoveSprite(bossShot[i].sprite, bossShot[i].position.x, bossShot[i].position.y);		
+		if (bossShot[i].position.y <= -2000)
+		{
+			bossShot[i].position.x = boss.position.x;
+			bossShot[i].position.y = boss.position.y;
+			circle = 1;
+		}
+		if (bossShot[i].position.y >= 1000)
+		{
+			bossShot[i].position.x = boss.position.x;
+			bossShot[i].position.y = boss.position.y;
+			circle = 1;
+		}
+		inc += 2*pi / 10;
+		circle += 0.1;
 	}
-	/*
-	static float angle = 0.0;
-	float pi = 3.14;
-	angle += 0.01;
-	float inc = 0.0;
+
+	// enemy movement around boss
+	enemyB1.position.x = (boss.position.x) + cosf( angle+inc ) * 200;
+	enemyB1.position.y = (boss.position.y) + sinf( angle+inc ) * 200;
+	inc += 2*pi / 2;
+	enemyB2.position.x = (boss.position.x) + cosf( angle+inc ) * 200;
+	enemyB2.position.y = (boss.position.y) + sinf( angle+inc ) * 200;
+	MoveSprite(enemyB1.sprite, enemyB1.position.x, enemyB1.position.y);
+	MoveSprite(enemyB2.sprite, enemyB2.position.x, enemyB2.position.y);
+	
+	
 	float speed = 2;
 	float sideShot = -5;
-	//float sideShot = (boss.position.x) + cosf( angle+inc ) * 300;
+	
 
 	for (int i = 0; i < 10; i++)
 	{
-	if (bossShot[i].position.y <= 0)
+	if (bossShot2[i].position.y <= 0)
 	{
-		bossShot[i].position.x = boss.position.x;
-		bossShot[i].position.y = boss.position.y;
+		bossShot2[i].position.x = boss.position.x;
+		bossShot2[i].position.y = boss.position.y;
 	}
 
-	if (bossShot[i].position.y >= 780)
+	if (bossShot2[i].position.y >= 780)
 	{
-		bossShot[i].position.x = boss.position.x;
-		bossShot[i].position.y = boss.position.y;
+		bossShot2[i].position.x = boss.position.x;
+		bossShot2[i].position.y = boss.position.y;
 	}
 	
-	bossShot[i].position.x += sideShot;
-	bossShot[i].position.y += speed;
-	inc += 2*(3.14) / 30;
+	bossShot2[i].position.x += sideShot;
+	bossShot2[i].position.y += speed;
 	sideShot++;
-}
-*/
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		int diff = player1.position.x - miniShot[0].position.x;
+		
+		if (miniShot[i].position.y <= 0 || miniShot[i].position.y >= 1000)
+		{
+			miniShot[0].position.x = enemyB1.position.x;
+			miniShot[0].position.y = enemyB1.position.y;
+			miniShot[1].position.x = enemyB2.position.x;
+			miniShot[1].position.y = enemyB2.position.y;
+		}
+		else {
+			//miniShot[i].position.x += diff;
+			miniShot[i].position.y += speed;
+		}
+	}
+
 }
 
 // check if one object has collided with another object
@@ -479,6 +521,7 @@ void checkEnemyCollision()
 		checkKilled++;
 		resetEnemy(enemy3);
 	}
+
 }
 
 // update the game logic here
@@ -627,6 +670,8 @@ void playState()
 void initBoss()
 {
 	boss.sprite = CreateSprite( "./images/enemy.png", 100, 100, true );
+	enemyB1.sprite = CreateSprite( "./images/enemy.png", 50, 50, true );
+	enemyB2.sprite = CreateSprite( "./images/enemy.png", 50, 50, true );
 		for (int i = 0; i < 10; i++)
 	{
 		bossShot[i].sprite = CreateSprite( "./images/enemybullet.png", 10, 10, true );
@@ -636,6 +681,26 @@ void initBoss()
 		bossShot[i].speed.y = 4;
 		bossShot[i].width = 10;
 		bossShot[i].height = 10;
+	}
+		for (int i = 0; i < 10; i++)
+	{
+		bossShot2[i].sprite = CreateSprite( "./images/enemybullet2.png", 10, 10, true );
+		bossShot2[i].position.x = 600;
+		bossShot2[i].position.y = -10;
+		bossShot2[i].speed.x = 0;
+		bossShot2[i].speed.y = 4;
+		bossShot2[i].width = 10;
+		bossShot2[i].height = 10;
+	}
+		for (int i = 0; i < 2; i++)
+	{
+		miniShot[i].sprite = CreateSprite( "./images/enemybullet3.png", 10, 10, true );
+		miniShot[i].position.x = 0;
+		miniShot[i].position.y = -10;
+		miniShot[i].speed.x = 0;
+		miniShot[i].speed.y = 4;
+		miniShot[i].width = 10;
+		miniShot[i].height = 10;
 	}
 }
 
@@ -651,9 +716,19 @@ void updateBoss()
 	if (playerBullet.dead == true && playerBullet2.dead == true && playerBullet3.dead == true)
 		ifDead(playerBullet, playerBullet2, playerBullet3);
 	MoveSprite(boss.sprite, boss.position.x, boss.position.y);
+	MoveSprite(enemyB1.sprite, enemyB1.position.x, enemyB1.position.y);
+	MoveSprite(enemyB2.sprite, enemyB2.position.x, enemyB2.position.y);
 	for (int i = 0; i < 10; i++)
 	{
 		MoveSprite(bossShot[i].sprite, bossShot[i].position.x, bossShot[i].position.y);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		MoveSprite(bossShot2[i].sprite, bossShot2[i].position.x, bossShot2[i].position.y);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		MoveSprite(miniShot[i].sprite, miniShot[i].position.x, miniShot[i].position.y);
 	}
 
 	for (int i = 0; i < 10; i++)
@@ -664,33 +739,84 @@ void updateBoss()
 	}
 	}
 
-	RotateSprite(player1.sprite, 0);
+	for (int i = 0; i < 2; i++)
+	{
+	if (checkCollision(player1,miniShot[i]) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
+	}
+
+		for (int i = 0; i < 10; i++)
+	{
+	if (checkCollision(player1,bossShot2[i]) == true) {
+		gameProcess = &gameOverState;
+		writeHS();
+	}
+	}
+
+	if (checkCollision(boss, playerBullet) == true || checkCollision(boss, playerBullet2) == true || checkCollision(boss, playerBullet3) == true)
+	{
+		scores++;
+		--bossHP;
+	}
+
 	MoveSprite(player1.sprite, player1.position.x, player1.position.y);
 	
-	RotateSprite(playerBullet.sprite, 0);
+	
 	MoveSprite(playerBullet.sprite, playerBullet.position.x, playerBullet.position.y);
-	RotateSprite(playerBullet2.sprite, 0);
 	MoveSprite(playerBullet2.sprite, playerBullet2.position.x, playerBullet2.position.y);
-	RotateSprite(playerBullet3.sprite, 0);
 	MoveSprite(playerBullet3.sprite, playerBullet3.position.x, playerBullet3.position.y);
 }
 
 void drawBoss()
 {
+	char score[10];
+	itoa(scores,score,10);
+	DrawString("Score: ", 1000, 25, SColour(0,0xFF,0,0));
+	DrawString(score, 1100, 25, SColour(0,0x7F,0,0x7F));
+	
+	if (bossHP <= 0)
+		DrawString("Game over", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
+
 	DrawSprite(player1.sprite);
 	DrawSprite(playerBullet.sprite);
 	DrawSprite(playerBullet2.sprite);
 	DrawSprite(playerBullet3.sprite);
 	DrawSprite(boss.sprite);
+	DrawSprite(enemyB1.sprite);	
+	DrawSprite(enemyB2.sprite);
 	for (int i = 0; i < 10; i++)
 	{
 		DrawSprite(bossShot[i].sprite);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		DrawSprite(bossShot2[i].sprite);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		DrawSprite(miniShot[i].sprite);
 	}
 }
 
 void destroyBoss()
 {
 	DestroySprite(boss.sprite);
+	DestroySprite(enemyB1.sprite);
+	DestroySprite(enemyB2.sprite);
+	for (int i = 0; i < 10; i++)
+	{
+		DestroySprite(bossShot[i].sprite);
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		DestroySprite(bossShot2[i].sprite);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		DestroySprite(miniShot[i].sprite);
+	}
 }
 
 void bossState()
@@ -748,8 +874,19 @@ void gameOverState()
 		enemyHell[i].position.x = 0;
 		enemyHell[i].position.y = 0;
 	}
+	for (int i = 0; i < 10; i++)
+	{
+		bossShot[i].position.x = 0;
+		bossShot[i].position.y = 0;
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		bossShot2[i].position.x = 0;
+		bossShot2[i].position.y = 0;
+	}
 	scores = 0;
 	checkKilled = 0;
+	bossHP = 2000;
 }
 // Write high scores
 void writeHS()
