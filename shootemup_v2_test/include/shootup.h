@@ -1,4 +1,4 @@
-//Last Edit 10/22/2013
+//Last Edit 10/28/2013
 //Will Gilstrap
 /////////////////////
 #pragma once
@@ -16,7 +16,7 @@
 #include <vector>
 //#include "vector2.h"
 #include "gameStates.h"
-#include "movableObject.h"
+#include "movableObject.h" // AKA Sprite
 #include "bullets.h"
 #include "highScores.h"
 #include "moveFilter.h"

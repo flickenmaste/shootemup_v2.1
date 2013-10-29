@@ -1,4 +1,4 @@
-//Last Edit 10/23/2013
+//Last Edit 10/28/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -34,9 +34,9 @@ int player1Score = 0;
 highScore h;
 unsigned int checkKilled = 0;
 float circle = 10;
-int bossHP = 1000;
+int bossHP = 2000;
 
-// check collision of bullet and enemy
+// check collision of enemy and bullet
 bool checkCollision(movableObject& obj1, bullets& obj2) {
 	int x; int y;
 	GetMouseLocation(x,y);
@@ -777,7 +777,7 @@ void drawBoss()
 	DrawString(score, 1100, 25, SColour(0,0x7F,0,0x7F));
 	
 	if (bossHP <= 0)
-		DrawString("Game over", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
+		DrawString("You win.", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
 
 	DrawSprite(player1.sprite);
 	DrawSprite(playerBullet.sprite);
