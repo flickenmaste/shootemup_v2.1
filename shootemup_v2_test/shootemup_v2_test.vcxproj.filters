@@ -18,6 +18,7 @@
     <None Include="resources\images\bg.png" />
     <None Include="resources\images\softblue.png" />
     <None Include="resources\images\softred.png" />
+    <None Include="resources\images\splash.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AIE.h">
@@ -27,9 +28,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\movableObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\bullets.h">
@@ -42,6 +40,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\supVars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

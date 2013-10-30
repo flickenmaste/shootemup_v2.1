@@ -16,7 +16,7 @@
 #include <vector>
 //#include "vector2.h"
 #include "gameStates.h"
-#include "movableObject.h" // AKA Sprite
+#include "sprite.h" // AKA Sprite
 #include "bullets.h"
 #include "highScores.h"
 #include "moveFilter.h"

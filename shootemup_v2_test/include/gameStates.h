@@ -1,4 +1,4 @@
-//Last Edit 10/22/2013
+//Last Edit 10/29/2013
 //Will Gilstrap
 /////////////////////
 #ifndef _GAMESTATES_H_
@@ -27,5 +27,8 @@ void updateBoss();
 void drawBoss();
 void destroyBoss();
 void bossState();
+// Win state
+void drawWin();
+void winState();
 
 #endif

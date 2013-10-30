@@ -102,6 +102,7 @@
     <None Include="resources\images\bg.png" />
     <None Include="resources\images\softblue.png" />
     <None Include="resources\images\softred.png" />
+    <None Include="resources\images\splash.png" />
     <None Include="resources\shaders\StaticFW_Pixel.glsl" />
     <None Include="resources\shaders\StaticFW_Vertex.glsl" />
   </ItemGroup>
@@ -111,8 +112,9 @@
     <ClInclude Include="include\collision.h" />
     <ClInclude Include="include\gameStates.h" />
     <ClInclude Include="include\highScores.h" />
-    <ClInclude Include="include\movableObject.h" />
+    <ClInclude Include="include\sprite.h" />
     <ClInclude Include="include\shootup.h" />
+    <ClInclude Include="include\supVars.h" />
     <ClInclude Include="include\vector2.h" />
   </ItemGroup>
   <ItemGroup>

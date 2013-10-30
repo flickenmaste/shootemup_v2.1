@@ -1,40 +1,8 @@
-//Last Edit 10/28/2013
+//Last Edit 10/29/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
-
-// global vars
-unsigned int bgImage = -1;
-unsigned int bgMenu = -1;
-unsigned int bgGameOver = -1;
-movableObject player1 = {687, 386, 0, 0, -1 , 100, 50};
-bullets playerBullet = {-100, 0, 0, 4, -1 , 10, 10, false, true};
-bullets playerBullet2 = {-100, 0, -4, 4, -1 , 10, 10, false, true};
-bullets playerBullet3 = {-100, 0, -4, 4, -1 , 10, 10, false, true};
-movableObject enemy = {-500, 800, 0, 1, -1 , 50, 50};
-movableObject enemy2 = {-500, 800, 0, 1, -1 , 50, 50};
-movableObject enemy3 = {0, 0, 0, 1, -1 , 50, 50};
-movableObject boss = {SCREEN_X / 2, SCREEN_Y / 6, 0, 1, -1 , 100, 100};
-movableObject enemyB1 = {0, 0, 0, 1, -1 , 50, 50};
-movableObject enemyB2 = {0, 0, 0, 1, -1 , 50, 50};
-enemybullets enemyBullet = {600, -10, 0, 4, -1 , 10, 10, false, true};
-movableObject playGame = {SCREEN_X / 2, SCREEN_Y / 2 + 50, 0, 0, -1 , 100, 30};
-movableObject exitMenu = {SCREEN_X / 2, SCREEN_Y / 2 + 100, 0, 0, -1 , 100, 30};
-bool g_gameOver = false;
-bool menuEnd = false;
-unsigned int scores = 0;
-vector<bullets> bulletLoaded;
-//vector<bullets> bulletLoaded2;
-//vector<bullets> bulletLoaded3;
-enemybullets enemyHell[10];
-enemybullets bossShot[10];
-enemybullets bossShot2[10];
-enemybullets miniShot[2];
-int player1Score = 0;
-highScore h;
-unsigned int checkKilled = 0;
-float circle = 10;
-int bossHP = 2000;
+#include "supVars.h"
 
 // check collision of enemy and bullet
 bool checkCollision(movableObject& obj1, bullets& obj2) {
@@ -574,10 +542,10 @@ void updateGame() {
 	if (checkKilled >= 2)
 		gameProcess = &bossState;
 
-	char score[10];
-	itoa(scores,score,10);
+	char score[10]; // buffer
+	itoa(scores,score,10); // convert int to string
 	DrawString("Score: ", 1000, 25, SColour(0,0xFF,0,0));
-	DrawString(score, 1100, 25, SColour(0,0x7F,0,0x7F));
+	DrawString(score, 1100, 25, SColour(0,0x7F,0,0x7F)); // draw string
 
 	RotateSprite(player1.sprite, 0);
 	MoveSprite(player1.sprite, player1.position.x, player1.position.y);
@@ -621,10 +589,13 @@ void drawGame() {
 	{
 		DrawSprite(enemyHell[i].sprite);
 	}
+
 }
 // Menu fuctions
 void initMenu()
 {
+	splash.sprite = CreateSprite( "./images/splash.png", SCREEN_X, SCREEN_Y, true );
+	MoveSprite(splash.sprite, splash.position.x, splash.position.y);
 	bgMenu = CreateSprite( "./images/menu3.jpg", SCREEN_X, SCREEN_Y, true );
 	MoveSprite(bgMenu, SCREEN_X>>1, SCREEN_Y>>1);
 }
@@ -639,12 +610,22 @@ void updateMenu()
 
 void drawMenu()
 {
+
+	if (tick <= 1000)
+	{
+		ClearScreen();
+		DrawSprite(splash.sprite);
+		tick++;
+	}
+	else
+	{
 	//DrawSprite(bgMenu);
 	DrawString("Menu", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
 	DrawString("Press SPACE to play...", SCREEN_X / 2 - 100, SCREEN_Y / 2 + 50, SColour(0,255,255,255));
 	//DrawString("Exit", SCREEN_X / 2, SCREEN_Y / 2 + 100, SColour(255,4,45,255));
 	DrawString("Controls: LEFT MOUSE to shoot", 870, 750, SColour(0,255,0,255));
 	DrawSprite(bgMenu);
+	}
 }
 
 void destroyMenu()
@@ -771,13 +752,18 @@ void updateBoss()
 
 void drawBoss()
 {
+	DrawSprite(bgImage);
 	char score[10];
 	itoa(scores,score,10);
 	DrawString("Score: ", 1000, 25, SColour(0,0xFF,0,0));
 	DrawString(score, 1100, 25, SColour(0,0x7F,0,0x7F));
 	
 	if (bossHP <= 0)
-		DrawString("You win.", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
+	{
+		destroyBoss();
+		writeHS();
+		gameProcess = &winState;
+	}
 
 	DrawSprite(player1.sprite);
 	DrawSprite(playerBullet.sprite);
@@ -816,6 +802,19 @@ void destroyBoss()
 	for (int i = 0; i < 2; i++)
 	{
 		DestroySprite(miniShot[i].sprite);
+		miniShot[i].position.x = 0;
+		miniShot[i].position.y = 0;
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		bossShot[i].position.x = 0;
+		bossShot[i].position.y = 0;
+	}
+	for (int i = 0; i < 10; i++)
+	{
+		bossShot2[i].position.x = 0;
+		bossShot2[i].position.y = 0;
 	}
 }
 
@@ -892,4 +891,17 @@ void gameOverState()
 void writeHS()
 {
 	h.write(scores);
+}
+
+// draw win state
+void drawWin()
+{
+	DrawString("This is the win screen.", SCREEN_X / 2, SCREEN_Y / 2, SColour(0,0xFF,0,0));
+}
+
+// win state
+void winState()
+{
+	ClearScreen();
+	drawWin();
 }
