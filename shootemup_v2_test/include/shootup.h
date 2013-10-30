@@ -1,4 +1,4 @@
-//Last Edit 10/28/2013
+//Last Edit 10/30/2013
 //Will Gilstrap
 /////////////////////
 #pragma once
@@ -19,7 +19,6 @@
 #include "sprite.h" // AKA Sprite
 #include "bullets.h"
 #include "highScores.h"
-#include "moveFilter.h"
 
 using namespace std;
 

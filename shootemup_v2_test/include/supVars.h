@@ -26,7 +26,7 @@ movableObject exitMenu = {SCREEN_X / 2, SCREEN_Y / 2 + 100, 0, 0, -1 , 100, 30};
 bool g_gameOver = false;
 bool menuEnd = false;
 unsigned int scores = 0;
-vector<bullets> bulletLoaded;
+//vector<bullets> bulletLoaded;
 //vector<bullets> bulletLoaded2;
 //vector<bullets> bulletLoaded3;
 enemybullets enemyHell[10];

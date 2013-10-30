@@ -1,4 +1,4 @@
-//Last Edit 10/29/2013
+//Last Edit 10/30/2013
 //Will Gilstrap
 /////////////////////
 #include "shootup.h"
@@ -539,7 +539,10 @@ void updateGame() {
 	}
 	}
 
-	if (checkKilled >= 2)
+	if (checkKilled >= 50)
+		gameProcess = &bossState;
+
+	if (IsKeyDown(KEY_SPECIAL+33) && IsKeyDown('W'))
 		gameProcess = &bossState;
 
 	char score[10]; // buffer
